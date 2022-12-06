@@ -2,16 +2,26 @@ from sklearn.preprocessing import normalize
 import numpy as np
 from robot import robot
 
-rob1 = robot(512, 512, 30)
-rob2 = robot(256, 512, 10)
-i = 0
-while True:
-    rob1.move([1024, 1024])
-    print([round(rob1.x), round(rob1.y)])
-    print([round(rob2.x), round(rob2.y)])
-    i+=1
-    if i >3:
-        break
+# print(np.zeros([20, 20]))
+for i in range(20):
+    print("[1,", end=" ")
+    for j in range(18):
+        if i == 0 or i == 19:
+            print("1,", end=" ")
+        else:
+            print("0,", end=" ")
+    print("1]")
+
+# rob1 = robot(512, 512, 30)
+# rob2 = robot(256, 512, 10)
+# i = 0
+# while True:
+#     rob1.move([1024, 1024])
+#     print([round(rob1.x), round(rob1.y)])
+#     print([round(rob2.x), round(rob2.y)])
+#     i+=1
+#     if i >3:
+#         break
 
 # r = 3
 # pos = [0, 1]
@@ -57,10 +67,10 @@ while True:
 # print(img.shape)
 # print(img)
 
-def f(x):
-    return -4 * x**3 - 6 * x**2 - 16 * x -5
-
-print(f(-2), f(1))
+# def f(x):
+#     return -4 * x**3 - 6 * x**2 - 16 * x -5
+#
+# print(f(-2), f(1))
 
 
 

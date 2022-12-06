@@ -12,8 +12,10 @@ class grid:
         img = np.ones([w, h, 3])
         self.gr = self.draw_grid(img, l)
         self.robot_observe_color = np.array([0., 0., 0.5, 0.5])
+        self.robot_obstacle_color = np.array([0., 0., 0., 0.])
         self.robot_pos_map = np.zeros([self.w, self.h, 4])
         self.discrete_map = np.zeros(l)  # -1:obstacle, 0:unknown, 1:known
+        self.gen_true_map()
 
     def draw_grid(self, img, grid_shape, color=(1, 0, 0), thickness=1):  #
         h, w, _ = img.shape
@@ -36,11 +38,12 @@ class grid:
         for x in range(-self.r, self.r+1):
             for y in range(-self.r, self.r+1):
                 if x**2+y**2 < self.r**2:
-                    loc = np.array([x, y])
-                    lx = pos[0]+x
+                    loc = np.array([x, y])  # relative
+                    lx = pos[0]+x           # global
                     ly = pos[1]+y
                     if self.w > lx > 0 and self.h > ly > 0:
-                        if np.dot(normalize(loc[:, np.newaxis], axis=0).ravel(), np.array([np.cos(yaw), np.sin(yaw)]))>0.5:
+                        # if np.dot(normalize(loc[:, np.newaxis], axis=0).ravel(), np.array([np.cos(yaw), np.sin(yaw)]))>0.5:
+                        if np.dot(normalize(loc[:, np.newaxis], axis=0).ravel(), yaw)>0.8:
                             self.robot_pos_map[lx, ly] = self.robot_observe_color
                             self.discrete_map[int(lx//(self.w/self.grid_shape[0]))][int(ly//(self.h/self.grid_shape[1]))] = 1
 
@@ -53,6 +56,10 @@ class grid:
                 if f[x][y] == 1:
                     out = self.print_grid([x, y], np.array([0.8, 0.8, 0.8]), out)
         self.robot_pos_map = np.zeros([self.w, self.h, 4])
+        for i in range(len(self.true_map)):
+            for j in range(len(self.true_map[0])):
+                if self.true_map[i][j]:
+                    self.print_grid([i, j], self.robot_obstacle_color, out)
         return out
 
     def print_grid(self, pos, color, mm):
@@ -87,6 +94,29 @@ class grid:
             return True
         else:
             return False
+
+    def gen_true_map(self):
+        self.true_map =[[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+        self.true_map = np.array(self.true_map)
 
 
 

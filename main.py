@@ -34,8 +34,8 @@ if __name__ == '__main__':
 
         rob1.move([1024, 1024])
         rob2.move([0, 0])
-        g.robot_move([round(rob1.x), round(rob1.y)], np.pi / 8)
-        g.robot_move([round(rob2.x), round(rob2.y)], np.pi / 8)
+        g.robot_move([round(rob1.x), round(rob1.y)], rob1.d)
+        g.robot_move([round(rob2.x), round(rob2.y)], rob2.d)
 
         m = g.gen_map()
         m = np.rot90(m, 1)

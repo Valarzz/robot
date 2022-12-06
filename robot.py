@@ -11,7 +11,7 @@ class robot:
 
     def move(self, des):
         n = des - np.array([self.x, self.y])
-        d = normalize(n[:, np.newaxis], axis=0).ravel() * self.speed
-        self.x += d[0]
-        self.y += d[1]
+        self.d = normalize(n[:, np.newaxis], axis=0).ravel() * self.speed
+        self.x += self.d[0]
+        self.y += self.d[1]
 
